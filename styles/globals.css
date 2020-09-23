@@ -14,3 +14,83 @@ a {
 * {
   box-sizing: border-box;
 }
+
+:root {
+  /* Color Palettes, go form 0-9 0 being the darkest */
+  --main-0: #061178;
+  --main-1: #0b1d96;
+  --main-2: #132dad;
+  --main-3: #1d3dbf;
+  --main-4: #2251cc;
+  --main-5: #3a66db;
+  --main-6: #5e8aee;
+  --main-7: #88b1fc;
+  --main-8: #b0d0ff;
+  --main-9: #d9e8ff;
+
+  /* Color Palete for Greys */
+  --grey-0: #1f2933;
+  --grey-1: #323f4b;
+  --grey-2: #3e4c59;
+  --grey-3: #52606d;
+  --grey-4: #616e7c;
+  --grey-5: #7b8794;
+  --grey-6: #9aa5b1;
+  --grey-7: #cbd2d9;
+  --grey-8: #e4e7eb;
+  --grey-9: #f5f7fa;
+
+  /* Supporting */
+
+  /* >> Blue */
+  --blue-0: #035388;
+  --blue-1: #0b69a3;
+  --blue-2: #127fbf;
+  --blue-3: #1992d4;
+  --blue-4: #2bb0ed;
+  --blue-5: #40c3f7;
+  --blue-6: #5ed0fa;
+  --blue-7: #81defd;
+  --blue-8: #b3ecff;
+  --blue-9: #e3f8ff;
+
+  /* >> Red */
+  --red-0: #610316;
+  --red-1: #8a041a;
+  --red-2: #ab091e;
+  --red-3: #cf1124;
+  --red-4: #e12d39;
+  --red-5: #ef4e4e;
+  --red-6: #f86a6a;
+  --red-7: #ff9b9b;
+  --red-8: #ffbdbd;
+  --red-9: #ffe3e3;
+
+  /* >> Green */
+  --green-0: #014d40;
+  --green-1: #0c6b58;
+  --green-2: #147d64;
+  --green-3: #199473;
+  --green-4: #27ab83;
+  --green-5: #3ebd93;
+  --green-6: #65d6ad;
+  --green-7: #8eedc7;
+  --green-8: #c6f7e2;
+  --green-9: #effcf6;
+
+  /* >> Yellow */
+  --yellow-0: #8d2b0b;
+  --yellow-1: #b44d12;
+  --yellow-2: #cb6e17;
+  --yellow-3: #de911d;
+  --yellow-4: #f0b429;
+  --yellow-5: #f7c948;
+  --yellow-6: #fadb5f;
+  --yellow-7: #fce588;
+  --yellow-8: #fff3c4;
+  --yellow-9: #fffbea;
+
+  /* Player Colors */
+  --p1: var(--red-5);
+  --p2: var(--yellow-5);
+}

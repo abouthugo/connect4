@@ -1,0 +1,84 @@
+.game_board {
+  position: relative;
+  width: 548px;
+  margin: 0 auto;
+  border: 8px solid var(--green-3);
+  height: 472px;
+  border-radius: 7px;
+  float: left;
+  z-index: 15;
+  box-sizing: border-box;
+}
+
+.play_area {
+  margin: 0 auto;
+  width: 750px;
+  margin-top: 100px;
+  background-color: antiquewhite;
+}
+
+.game_board_underlay {
+  position: absolute;
+  width: 548px;
+  height: 472px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  border: 16px solid transparent;
+}
+
+.game_scene {
+  width: 100%;
+  position: relative;
+  z-index: 9;
+}
+
+/* Stands */
+
+.stand_container {
+  float: left;
+  width: 100px;
+  margin-top: 150px;
+  position: relative;
+}
+
+.stand_container.left {
+  left: 27.5px;
+}
+
+.stand_container.right {
+  right: 27.5px;
+}
+
+.stand_leg {
+  width: 20px;
+  height: 350px;
+  margin: 0 auto;
+  background-color: var(--yellow-2);
+  border-radius: 5px 5px 0px 0px;
+}
+
+.stand_attachment {
+  width: 15px;
+  height: 20px;
+  background-color: var(--yellow-2);
+  position: absolute;
+  top: 15px;
+}
+
+.stand_attachment.left {
+  left: 58px;
+}
+
+.stand_attachment.right {
+  right: 58px;
+}
+
+.stand_foot {
+  width: 100%;
+  background-color: var(--yellow-2);
+  height: 20px;
+  border-radius: 8px 8px 0px 0px;
+  top: 350px;
+}
