@@ -5,8 +5,10 @@ import { GameContext } from "./context";
 
 // From Framer Motion example
 const transition = {
-  ease: easeOutBounce,
-  duration: 0.75,
+  top: {
+    ease: easeOutBounce,
+    duration: 0.75,
+  },
 };
 
 export default function Token({ player }: TokenProps) {
