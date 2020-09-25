@@ -1,39 +1,26 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
 import Board from "../components/Board";
-import Token from "../components/Token";
 import styles from "../styles/Home.module.css";
-import { GameContext } from "../components/context";
+import useGameReducer from "game_logic/useGameReducer";
+import { GameContext } from "game_logic/context";
 
 const { Provider } = GameContext;
 
 export default function Home() {
-  const [offset, setOffset] = useState(0);
-  const [tokenTop, setTokenTop] = useState(-50);
-
-  const handleMoveRight = () => {
-    if (offset < 456) setOffset(offset + 76);
-  };
-
-  const handleMoveLeft = () => {
-    if (offset > 0) setOffset(offset - 76);
-  };
+  const { state, moveRight, moveLeft, dropToken } = useGameReducer();
 
   const handleKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case "ArrowRight":
-        handleMoveRight();
+        moveRight();
         break;
       case "ArrowLeft":
-        handleMoveLeft();
+        moveLeft();
         break;
       case "ArrowDown":
-        // TODO: replace the number "5" with the next available row in the game
-        setTokenTop(0 + 76 * 5);
+        dropToken();
         break;
-      case "ArrowUp":
-        setTokenTop(-50);
       default:
     }
   };
@@ -43,26 +30,19 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  });
+  }, [state]);
 
   return (
-    <Provider
-      value={{
-        tokenOffset: offset,
-        tokenTop,
-        moveLeft: handleMoveLeft,
-        moveRight: handleMoveRight,
-      }}
-    >
+    <Provider value={{ state, moveRight, moveLeft, dropToken }}>
       <div className={styles.container}>
         <Head>
-          <title>Offset {offset}</title>
+          <title>Column {state.currentColumn}</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <main className={styles.main}>
-          <h1 className={styles.title}>Welcome to Connect 4!</h1>
-          <Board token={<Token player={0} />} />
+          <h1 className={styles.title}>Let's play connect 4!</h1>
+          <Board />
         </main>
       </div>
     </Provider>

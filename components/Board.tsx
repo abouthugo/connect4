@@ -1,4 +1,7 @@
+import { GameContext } from "game_logic/context";
+import { useContext } from "react";
 import styles from "../styles/Board.module.css";
+import Token from "./Token";
 
 const spaceBetween = 76;
 const rows = 7;
@@ -7,7 +10,9 @@ const radius = 30;
 const startX = 38;
 const startY = 38;
 
-export default function Board({ token }: BoardProps) {
+export default function Board() {
+  const { state } = useContext(GameContext);
+  const tokenList = state.tokenList;
   return (
     <div className={styles.game_scene}>
       <div className={styles.play_area}>
@@ -19,7 +24,7 @@ export default function Board({ token }: BoardProps) {
         </div>
 
         {/* Where the tokens are */}
-        <div className={styles.game_board_underlay}>{token}</div>
+        <div className={styles.game_board_underlay}>{renderTokenList()}</div>
 
         {/* Where the spaces are */}
         <svg className={styles.game_board}>
@@ -78,8 +83,20 @@ export default function Board({ token }: BoardProps) {
       );
     });
   }
+
+  function renderTokenList() {
+    return tokenList.map((t, index) => (
+      <Token
+        offset={t.offset}
+        playerTag={t.playerTag}
+        top={t.top}
+        active={t.active}
+        key={`${index}-${t.playerTag}`}
+      />
+    ));
+  }
 }
 
 interface BoardProps {
-  token: JSX.Element;
+  tokenList: TokenObject[];
 }

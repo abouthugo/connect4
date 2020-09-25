@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import styles from "styles/Token.module.css";
-import { GameContext } from "./context";
 
 // From Framer Motion example
 const transition = {
@@ -9,20 +8,26 @@ const transition = {
     ease: easeOutBounce,
     duration: 0.75,
   },
+  transform: {
+    ease: "easeIn",
+    duration: 0.3,
+  },
 };
 
-export default function Token({ player }: TokenProps) {
-  const color = player === 0 ? "var(--p1)" : "var(--p2)";
-  const { tokenOffset, tokenTop } = useContext(GameContext);
+export default function Token({ playerTag, top, offset, active }: TokenProps) {
+  const color = playerTag === "O" ? "var(--p1)" : "var(--p2)";
+  const transform = active ? "scale(1.1)" : "scale(0)";
+
   return (
     <motion.div
       className={styles.token}
       style={{
         background: color,
-        left: tokenOffset,
-        top: tokenTop,
+        left: offset,
+        top,
+        transform,
       }}
-      animate={{ top: tokenTop, left: tokenOffset }}
+      animate={{ top, left: offset, transform }}
       transition={transition}
       initial={false}
     />
@@ -30,7 +35,10 @@ export default function Token({ player }: TokenProps) {
 }
 
 interface TokenProps {
-  player: number;
+  playerTag: string;
+  top: number;
+  offset: number;
+  active: Boolean;
 }
 
 function easeOutBounce(x: number): number {
