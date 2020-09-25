@@ -19,5 +19,4 @@ export const GameContext = createContext({
   dropToken: () => {},
   moveRight: () => {},
   moveLeft: () => {},
-  showToken: () => {},
 });
