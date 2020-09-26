@@ -86,7 +86,7 @@ function gameReducer(state: GameState, action: any): GameState {
   }
 
   /**
-   * Iterates the array form bottom to top and returns the first available cell
+   * Iterates the array from bottom to top and returns the first available cell
    */
   function getAvailableRow() {
     const { board, currentColumn, boardRows } = state;
@@ -125,7 +125,7 @@ export default function useGameReducer() {
   };
 
   const moveLeft = () => {
-    const { tokenOffset, boardColumns } = state;
+    const { tokenOffset } = state;
     if (tokenOffset > 0) {
       dispatch({ type: MOVE_LEFT });
     }
@@ -134,9 +134,11 @@ export default function useGameReducer() {
   const dropToken = () => {
     dispatch({ type: DROP });
     setTimeout(function () {
-      dispatch({ type: SHOW_TOKEN });
-      console.log(dispatch);
-      console.log("Dispatched");
+      if (!state.gameOver) {
+        dispatch({ type: SHOW_TOKEN });
+        console.log(dispatch);
+        console.log("Dispatched");
+      }
     }, 350);
   };
 
