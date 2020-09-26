@@ -11,17 +11,19 @@ export default function Home() {
   const { state, moveRight, moveLeft, dropToken } = useGameReducer();
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case "ArrowRight":
-        moveRight();
-        break;
-      case "ArrowLeft":
-        moveLeft();
-        break;
-      case "ArrowDown":
-        dropToken();
-        break;
-      default:
+    if (!state.gameOver) {
+      switch (e.key) {
+        case "ArrowRight":
+          moveRight();
+          break;
+        case "ArrowLeft":
+          moveLeft();
+          break;
+        case "ArrowDown":
+          dropToken();
+          break;
+        default:
+      }
     }
   };
 
@@ -41,7 +43,9 @@ export default function Home() {
         </Head>
 
         <main className={styles.main}>
-          <h1 className={styles.title}>Let's play connect 4!</h1>
+          <h1 className={styles.title}>
+            {state.gameOver ? "GAME OVER" : "Let's play connect 4!"}
+          </h1>
           <Board />
         </main>
       </div>

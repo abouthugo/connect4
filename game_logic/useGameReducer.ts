@@ -1,5 +1,6 @@
 import { initializeBoard, initializeTokens } from "lib/utils";
 import { Reducer, useReducer } from "react";
+import { isAWinMove } from "./BoardLogic";
 
 const MOVE_RIGHT = "MOVE_RIGHT";
 const MOVE_LEFT = "MOVE_LEFT";
@@ -18,7 +19,7 @@ function gameReducer(state: GameState, action: any): GameState {
     }
     case DROP: {
       const row = getAvailableRow();
-      console.log(row);
+
       if (row !== -1) {
         const {
           board,
@@ -35,10 +36,15 @@ function gameReducer(state: GameState, action: any): GameState {
           if (index === tokenIndex) {
             return { ...t, top: 76 * row };
           }
-
           return t;
         });
-        // TODO CHECK for a win
+        const gameOver = isAWinMove(
+          newBoard,
+          currentPlayer,
+          row,
+          currentColumn
+        );
+
         return {
           ...state,
           tokenList: newTokenList,
@@ -47,6 +53,7 @@ function gameReducer(state: GameState, action: any): GameState {
           tokenIndex: tokenIndex + 1,
           currentColumn: 0,
           tokenOffset: 0,
+          gameOver,
         };
       }
       return state;
@@ -90,7 +97,6 @@ function gameReducer(state: GameState, action: any): GameState {
    */
   function getAvailableRow() {
     const { board, currentColumn, boardRows } = state;
-    console.log(board);
     for (let row = boardRows - 1; row >= 0; row--) {
       if (board[row][currentColumn] === undefined) {
         return row;
@@ -119,7 +125,6 @@ export default function useGameReducer() {
   const moveRight = () => {
     const { tokenOffset, boardColumns } = state;
     if (tokenOffset < 76 * (boardColumns - 1)) {
-      console.log("Passed the test");
       dispatch({ type: MOVE_RIGHT });
     }
   };
@@ -136,10 +141,8 @@ export default function useGameReducer() {
     setTimeout(function () {
       if (!state.gameOver) {
         dispatch({ type: SHOW_TOKEN });
-        console.log(dispatch);
-        console.log("Dispatched");
       }
-    }, 350);
+    }, 750);
   };
 
   return { state, moveRight, moveLeft, dropToken };
