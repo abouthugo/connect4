@@ -5,7 +5,7 @@ import { isAWinMove } from "./BoardLogic";
 const MOVE_RIGHT = "MOVE_RIGHT";
 const MOVE_LEFT = "MOVE_LEFT";
 const DROP = "DROP";
-const SHOW_TOKEN = "SHOW_TOKEN";
+const NEXT_TURN = "NEXT_TURN";
 
 function gameReducer(state: GameState, action: any): GameState {
   switch (action.type) {
@@ -31,7 +31,6 @@ function gameReducer(state: GameState, action: any): GameState {
 
         const newBoard = [...board];
         newBoard[row][currentColumn] = currentPlayer; // update the board
-        const newCurrentPlayer = currentPlayer === "O" ? "X" : "O"; // update the next player
         const newTokenList = tokenList.map((t, index) => {
           if (index === tokenIndex) {
             return { ...t, top: 76 * row };
@@ -49,7 +48,6 @@ function gameReducer(state: GameState, action: any): GameState {
           ...state,
           tokenList: newTokenList,
           board: newBoard,
-          currentPlayer: newCurrentPlayer,
           tokenIndex: tokenIndex + 1,
           currentColumn: 0,
           tokenOffset: 0,
@@ -58,13 +56,19 @@ function gameReducer(state: GameState, action: any): GameState {
       }
       return state;
     }
-    case SHOW_TOKEN: {
-      const { tokenIndex, tokenList } = state;
+    case NEXT_TURN: {
+      const { tokenIndex, tokenList, gameOver, currentPlayer } = state;
+      if (gameOver) return state;
+      const newCurrentPlayer = currentPlayer === "O" ? "X" : "O"; // update the next player
       const newTokenList = tokenList.map((t, i) => {
         if (i === tokenIndex) return { ...t, active: true };
         return t;
       });
-      return { ...state, tokenList: newTokenList };
+      return {
+        ...state,
+        tokenList: newTokenList,
+        currentPlayer: newCurrentPlayer,
+      };
     }
     default:
       return state;
@@ -139,10 +143,8 @@ export default function useGameReducer() {
   const dropToken = () => {
     dispatch({ type: DROP });
     setTimeout(function () {
-      if (!state.gameOver) {
-        dispatch({ type: SHOW_TOKEN });
-      }
-    }, 750);
+      dispatch({ type: NEXT_TURN });
+    }, 350);
   };
 
   return { state, moveRight, moveLeft, dropToken };
