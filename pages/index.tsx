@@ -9,9 +9,9 @@ const { Provider } = GameContext;
 
 export default function Home() {
   const { state, moveRight, moveLeft, dropToken } = useGameReducer();
-
+  const { currentPlayer, gameOver, gameReady } = state;
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (!state.gameOver) {
+    if (!state.gameOver && gameReady) {
       switch (e.key) {
         case "ArrowRight":
           moveRight();
@@ -43,10 +43,18 @@ export default function Home() {
         </Head>
 
         <main className={styles.main}>
-          <h1 className={styles.title}>
-            {state.gameOver ? "GAME OVER" : "Let's play connect 4!"}
-          </h1>
-          <Board />
+          {gameReady && (
+            <>
+              <h1 className={styles.title}>
+                {gameOver
+                  ? `${currentPlayer.name} wins!`
+                  : "Let's play connect 4!"}
+              </h1>
+              <Board />
+            </>
+          )}
+
+          {/* TODO: ask user for username */}
         </main>
       </div>
     </Provider>

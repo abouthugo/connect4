@@ -9,9 +9,10 @@ declare interface GameState {
   boardColumns: number;
   boardRows: number;
   board: string[][];
-  player1Tag: string;
-  player2Tag: string;
-  currentPlayer: string;
+  player1: Player;
+  player2: Player;
+  currentPlayer: Player;
+  gameReady: boolean;
   tokenIndex: number;
   tokenOffset: number;
   tokenTop: number;
@@ -24,4 +25,10 @@ declare interface TokenObject {
   top: number;
   offset: number;
   playerTag: string;
+}
+
+declare interface Player {
+  name: string;
+  tag: string;
+  wins: number;
 }

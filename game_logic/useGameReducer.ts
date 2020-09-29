@@ -1,5 +1,5 @@
 import { initializeBoard, initializeTokens } from "lib/utils";
-import { Reducer, useReducer } from "react";
+import { useReducer } from "react";
 import { isAWinMove } from "./BoardLogic";
 
 const MOVE_RIGHT = "MOVE_RIGHT";
@@ -30,7 +30,7 @@ function gameReducer(state: GameState, action: any): GameState {
         } = state;
 
         const newBoard = [...board];
-        newBoard[row][currentColumn] = currentPlayer; // update the board
+        newBoard[row][currentColumn] = currentPlayer.tag; // update the board
         const newTokenList = tokenList.map((t, index) => {
           if (index === tokenIndex) {
             return { ...t, top: 76 * row };
@@ -39,7 +39,7 @@ function gameReducer(state: GameState, action: any): GameState {
         });
         const gameOver = isAWinMove(
           newBoard,
-          currentPlayer,
+          currentPlayer.tag,
           row,
           currentColumn
         );
@@ -57,9 +57,16 @@ function gameReducer(state: GameState, action: any): GameState {
       return state;
     }
     case NEXT_TURN: {
-      const { tokenIndex, tokenList, gameOver, currentPlayer } = state;
+      const {
+        tokenIndex,
+        tokenList,
+        gameOver,
+        currentPlayer,
+        player1,
+        player2,
+      } = state;
       if (gameOver) return state;
-      const newCurrentPlayer = currentPlayer === "O" ? "X" : "O"; // update the next player
+      const nextPlayer = currentPlayer.tag === "O" ? player2 : player1; // update the next player
       const newTokenList = tokenList.map((t, i) => {
         if (i === tokenIndex) return { ...t, active: true };
         return t;
@@ -67,7 +74,7 @@ function gameReducer(state: GameState, action: any): GameState {
       return {
         ...state,
         tokenList: newTokenList,
-        currentPlayer: newCurrentPlayer,
+        currentPlayer: nextPlayer,
       };
     }
     default:
@@ -111,14 +118,29 @@ function gameReducer(state: GameState, action: any): GameState {
 }
 
 export default function useGameReducer() {
+  const player1 = {
+    name: "",
+    tag: "O",
+    wins: 0,
+  };
+
+  const player2 = {
+    name: "AI",
+    tag: "X",
+    wins: 0,
+  };
+
+  const currentPlayer = player1;
+
   const [state, dispatch] = useReducer(gameReducer, {
     gameOver: false,
     boardColumns: 7,
     boardRows: 6,
     board: initializeBoard(7, 6),
-    player1Tag: "O",
-    player2Tag: "X",
-    currentPlayer: "O",
+    player1,
+    player2,
+    currentPlayer,
+    gameReady: false,
     tokenIndex: 0,
     tokenOffset: 0,
     tokenTop: 0,
