@@ -6,6 +6,7 @@ const MOVE_RIGHT = "MOVE_RIGHT";
 const MOVE_LEFT = "MOVE_LEFT";
 const DROP = "DROP";
 const NEXT_TURN = "NEXT_TURN";
+const SET_NAME = "SET_NAME";
 
 function gameReducer(state: GameState, action: any): GameState {
   switch (action.type) {
@@ -76,6 +77,13 @@ function gameReducer(state: GameState, action: any): GameState {
         tokenList: newTokenList,
         currentPlayer: nextPlayer,
       };
+    }
+    case SET_NAME: {
+      const { name } = action.payload;
+      const { player1 } = state;
+      // TODO: change logic for current player, it should be set once the game starts not prior
+      const py = { ...player1, name };
+      return { ...state, player1: py, currentPlayer: py, gameReady: true };
     }
     default:
       return state;
@@ -169,7 +177,11 @@ export default function useGameReducer() {
     }, 350);
   };
 
-  return { state, moveRight, moveLeft, dropToken };
+  const stateMyName = (name: string) => {
+    dispatch({ type: SET_NAME, payload: { name } });
+  };
+
+  return { state, moveRight, moveLeft, dropToken, stateMyName };
 }
 
 type Action = { type: "MOVE_RIGHT" } | { type: "MOVE_LEFT" } | { type: "DROP" };

@@ -1,0 +1,43 @@
+.main_container {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  background: white;
+  border: 2px solid var(--grey-8);
+  padding: 12px 18px;
+  padding-top: 36px;
+  border-radius: 4px;
+  max-width: 400px;
+  h1 {
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: 36px;
+    text-align: center;
+  }
+}
+.input_container {
+  position: relative;
+}
+.label {
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  font-size: 16px;
+  color: var(--grey-5);
+  transition: all 0.3s ease-in-out;
+}
+
+.label.activated {
+  left: 3px;
+  top: -2px;
+  font-size: 12px;
+  color: var(--grey-3);
+}
+
+.input {
+  margin-top: 16px;
+  border: none;
+  padding: 7px 3px;
+  background: var(--grey-9);
+  width: 100%;
+}

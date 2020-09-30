@@ -28,4 +28,5 @@ export const GameContext = createContext({
   dropToken: () => {},
   moveRight: () => {},
   moveLeft: () => {},
+  stateMyName: (name: string) => {},
 });

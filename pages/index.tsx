@@ -9,7 +9,13 @@ import Welcome from "components/Welcome";
 const { Provider } = GameContext;
 
 export default function Home() {
-  const { state, moveRight, moveLeft, dropToken } = useGameReducer();
+  const {
+    state,
+    moveRight,
+    moveLeft,
+    dropToken,
+    stateMyName,
+  } = useGameReducer();
   const { currentPlayer, gameOver, gameReady } = state;
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!state.gameOver && gameReady) {
@@ -36,7 +42,7 @@ export default function Home() {
   }, [state]);
 
   return (
-    <Provider value={{ state, moveRight, moveLeft, dropToken }}>
+    <Provider value={{ state, moveRight, moveLeft, dropToken, stateMyName }}>
       <div className={styles.container}>
         <Head>
           <title>Column {state.currentColumn}</title>
@@ -49,12 +55,12 @@ export default function Home() {
               <h1 className={styles.title}>
                 {gameOver
                   ? `${currentPlayer.name} wins!`
-                  : "Let's play connect 4!"}
+                  : `${currentPlayer.name} `}
               </h1>
               <Board />
             </>
           )}
-          {!gameReady && <Welcome label="name" />}
+          {!gameReady && <Welcome label="Name" />}
 
           {/* TODO: ask user for username */}
         </main>
