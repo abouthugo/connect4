@@ -4,6 +4,7 @@ import Board from "../components/Board";
 import styles from "../styles/Home.module.css";
 import useGameReducer from "game_logic/useGameReducer";
 import { GameContext } from "game_logic/context";
+import Welcome from "components/Welcome";
 
 const { Provider } = GameContext;
 
@@ -53,6 +54,7 @@ export default function Home() {
               <Board />
             </>
           )}
+          {!gameReady && <Welcome label="name" />}
 
           {/* TODO: ask user for username */}
         </main>
