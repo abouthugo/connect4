@@ -1,17 +1,26 @@
 import { MouseEvent } from "react";
-import styles from "../styles/Button.module.css";
+import styles from "../styles/Button.module.scss";
 
 export default function Button({
   children,
   type,
   disabled,
   onClick,
+  fullWidth,
 }: ButtonProps) {
-  const classes = `${styles.button} ${styles[type]} ${
-    disabled ? "disabled" : ""
-  }`;
+  const classes: string[] = [];
+  if (disabled) {
+    classes.push(styles.disabled);
+  } else {
+    classes.push(styles.button);
+    classes.push(styles[type]);
+  }
+
+  if (fullWidth) {
+    classes.push(styles.full_width);
+  }
   return (
-    <a className={classes} onClick={clickHandler}>
+    <a className={classes.join(" ")} onClick={clickHandler}>
       {children}
     </a>
   );
@@ -24,6 +33,7 @@ export default function Button({
 
 Button.defaultProps = {
   disabled: false,
+  fullWidth: false,
   onClick: () => {},
 };
 
@@ -32,4 +42,5 @@ interface ButtonProps {
   disabled: boolean;
   onClick: Function;
   children: React.ReactNode;
+  fullWidth: boolean;
 }

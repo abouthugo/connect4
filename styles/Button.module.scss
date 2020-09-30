@@ -4,7 +4,7 @@
   background: var(--bg-color);
   box-sizing: border-box;
   display: block;
-  width: fit-content;
+  text-align: center;
   border-radius: 4px;
   margin: 20px auto;
   font-size: 16px;
@@ -14,20 +14,17 @@
   user-select: none;
 }
 
+.full_width {
+  width: 100%;
+}
+
 .primary {
-  --bg-color: white;
-  border: 1px solid var(--grey-8);
+  --bg-color: var(--main-5);
+  color: white;
 }
 
 .primary:hover {
-  --bg-color: var(--grey-9);
-}
-
-.primary:active,
-.primary:visited {
-  --bg-color: white;
-  border: 1px solid var(--main-5);
-  box-shadow: 0 0 0 2pt var(--main-9);
+  --bg-color: var(--main-4);
 }
 
 .primary .secondary {
