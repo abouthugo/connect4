@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import useGameReducer from "game_logic/useGameReducer";
 import { GameContext } from "game_logic/context";
 import Welcome from "components/Welcome";
+import socket from "lib/socket";
 
 const { Provider } = GameContext;
 
@@ -16,6 +17,9 @@ export default function Home() {
     dropToken,
     stateMyName,
   } = useGameReducer();
+  socket.on("someevent", () => {
+    console.log("event triggered");
+  });
   const { currentPlayer, gameOver, gameReady } = state;
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!state.gameOver && gameReady) {
