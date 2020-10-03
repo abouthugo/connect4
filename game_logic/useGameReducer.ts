@@ -85,6 +85,39 @@ function gameReducer(state: GameState, action: any): GameState {
       const py = { ...player1, name };
       return { ...state, player1: py, currentPlayer: py, gameReady: true };
     }
+    case RESTART: {
+      const { currentPlayer, player1, player2 } = state;
+      const board = initializeBoard(7, 6);
+
+      let _player1, _player2, _currentPlayer: Player;
+      let tokens: TokenObject[];
+      if (currentPlayer.name === player1.name) {
+        _player1 = { ...player1, wins: player1.wins + 1 };
+        _player2 = player2;
+        _currentPlayer = _player1;
+        tokens = initializeTokens(_player1.tag, _player2.tag);
+      } else {
+        _player1 = player1;
+        _player2 = { ...player2, wins: player1.wins + 1 };
+        _currentPlayer = _player2;
+        tokens = initializeTokens(_player2.tag, _player1.tag);
+      }
+
+      //TODO: update the number of wins
+      return {
+        ...state,
+        tokenList: tokens,
+        board,
+        tokenOffset: 0,
+        tokenIndex: 0,
+        tokenTop: 0,
+        currentColumn: 0,
+        gameOver: false,
+        player1: _player1,
+        player2: _player2,
+        currentPlayer: _currentPlayer,
+      };
+    }
     default:
       return state;
   }
@@ -125,6 +158,7 @@ function gameReducer(state: GameState, action: any): GameState {
   }
 }
 
+const RESTART = "RESTART";
 export default function useGameReducer() {
   const player1 = {
     name: "",
@@ -181,7 +215,11 @@ export default function useGameReducer() {
     dispatch({ type: SET_NAME, payload: { name } });
   };
 
-  return { state, moveRight, moveLeft, dropToken, stateMyName };
+  const restartGame = () => {
+    dispatch({ type: RESTART });
+  };
+
+  return { state, moveRight, moveLeft, dropToken, stateMyName, restartGame };
 }
 
 type Action = { type: "MOVE_RIGHT" } | { type: "MOVE_LEFT" } | { type: "DROP" };

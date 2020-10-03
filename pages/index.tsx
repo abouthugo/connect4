@@ -6,6 +6,7 @@ import useGameReducer from "game_logic/useGameReducer";
 import { GameContext } from "game_logic/context";
 import Welcome from "components/Welcome";
 import socket from "lib/socket";
+import Button from "components/Button";
 
 const { Provider } = GameContext;
 
@@ -16,6 +17,7 @@ export default function Home() {
     moveLeft,
     dropToken,
     stateMyName,
+    restartGame,
   } = useGameReducer();
   socket.on("someevent", () => {
     console.log("event triggered");
@@ -61,6 +63,11 @@ export default function Home() {
                   ? `${currentPlayer.name} wins!`
                   : `${currentPlayer.name} `}
               </h1>
+              {gameOver && (
+                <Button type="primary" onClick={() => restartGame()}>
+                  Restart
+                </Button>
+              )}
               <Board />
             </>
           )}
