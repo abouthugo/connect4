@@ -1,6 +1,6 @@
 import Button from "./Button";
 import styles from "../styles/Welcome.module.scss";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GameContext } from "game_logic/context";
 
 export default function Welcome({ label }: WelcomeProps) {
@@ -11,6 +11,19 @@ export default function Welcome({ label }: WelcomeProps) {
   const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
+
+  const handleOnKeyDown = (e: KeyboardEvent) => {
+    if (focus && e.key === "Enter") {
+      stateMyName(name);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keypress", handleOnKeyDown);
+    return () => {
+      document.removeEventListener("keypress", handleOnKeyDown);
+    };
+  }, [focus, name]);
 
   const labelStyles =
     name.length < 1 && !focus
