@@ -1,4 +1,4 @@
-export function initializeBoard(columns: number, rows: number) {
+export function initializeBoard(columns: number, rows: number): string[][] {
   return Array.from(Array(rows)).map((i) => Array.from(Array(columns)));
 }
 
