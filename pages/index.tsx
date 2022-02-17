@@ -7,6 +7,7 @@ import { GameContext } from "game_logic/context";
 import Welcome from "components/Welcome";
 import socket from "lib/socket";
 import Button from "components/Button";
+import { GAME_ID, PLAYERS_DATA, STATUS, START_GAME } from "lib/variables";
 
 const { Provider } = GameContext;
 
@@ -19,10 +20,9 @@ export default function Home() {
     stateMyName,
     restartGame,
   } = useGameReducer();
-  socket.on("someevent", () => {
-    console.log("event triggered");
-  });
-  const { currentPlayer, gameOver, gameReady } = state;
+  subscribe();
+
+  const { gameReady } = state;
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!state.gameOver && gameReady) {
       switch (e.key) {
@@ -51,31 +51,35 @@ export default function Home() {
     <Provider value={{ state, moveRight, moveLeft, dropToken, stateMyName }}>
       <div className={styles.container}>
         <Head>
-          <title>Column {state.currentColumn}</title>
+          <title>Connect 4</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <main className={styles.main}>
-          {gameReady && (
-            <>
-              <h1 className={styles.title}>
-                {gameOver
-                  ? `${currentPlayer.name} wins!`
-                  : `${currentPlayer.name} `}
-              </h1>
-              {gameOver && (
-                <Button type="primary" onClick={() => restartGame()}>
-                  Restart
-                </Button>
-              )}
-              <Board />
-            </>
-          )}
-          {!gameReady && <Welcome label="Name" />}
-
-          {/* TODO: ask user for username */}
+          <Welcome label="Name" />
         </main>
       </div>
     </Provider>
   );
+
+  /**
+   * Function to subscribe the socket to all the server events
+   */
+  function subscribe() {
+    socket.on(GAME_ID, (gameid: string) => {
+      // TODO: create url with this gameIDs
+    });
+
+    socket.on(PLAYERS_DATA, (players: ServerPlayer[]) => {
+      // TODO: find out which player you are and add the opponent to the p2 instance
+    });
+
+    socket.on(STATUS, (msg: string) => {
+      // TODO: handle these status
+    });
+
+    socket.on(START_GAME, () => {
+      // TODO: make the game start
+    });
+  }
 }

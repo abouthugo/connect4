@@ -1,49 +1,65 @@
 import { initializeBoard, initializeTokens } from "lib/utils";
 import { useReducer } from "react";
 import { isAWinMove } from "./BoardLogic";
+import socket from "../lib/socket";
+import { string } from "prop-types";
 
 const MOVE_RIGHT = "MOVE_RIGHT";
 const MOVE_LEFT = "MOVE_LEFT";
 const DROP = "DROP";
 const NEXT_TURN = "NEXT_TURN";
 const SET_NAME = "SET_NAME";
+const RESTART = "RESTART";
 
 function gameReducer(state: GameState, action: any): GameState {
   switch (action.type) {
     case MOVE_RIGHT: {
+      if (!safeGuard()) return state;
       const { tokenList, currentColumn, tokenOffset } = move("RIGHT");
       return { ...state, tokenList, currentColumn, tokenOffset };
     }
     case MOVE_LEFT: {
+      if (!safeGuard()) return state;
       const { tokenList, currentColumn, tokenOffset } = move("LEFT");
       return { ...state, tokenList, currentColumn, tokenOffset };
     }
     case DROP: {
+      const {
+        board,
+        currentColumn,
+        tokenList,
+        tokenIndex,
+        currentPlayer,
+        me,
+        opponent,
+      } = state;
+      if (!currentPlayer || !me || !opponent) return state;
       const row = getAvailableRow();
 
       if (row !== -1) {
-        const {
-          board,
-          currentColumn,
-          tokenList,
-          tokenIndex,
-          currentPlayer,
-        } = state;
-
+        // update the board -->
         const newBoard = [...board];
-        newBoard[row][currentColumn] = currentPlayer.tag; // update the board
+        newBoard[row][currentColumn] =
+          currentPlayer === me.id ? me.tag : opponent.tag;
+        // <--
+
+        // Update the token list -->
         const newTokenList = tokenList.map((t, index) => {
           if (index === tokenIndex) {
             return { ...t, top: 76 * row };
           }
           return t;
         });
+        // <--
+
+        // See if this is a win move -->
         const gameOver = isAWinMove(
           newBoard,
-          currentPlayer.tag,
+          currentPlayer,
           row,
           currentColumn
         );
+        // <--
 
         return {
           ...state,
@@ -58,16 +74,17 @@ function gameReducer(state: GameState, action: any): GameState {
       return state;
     }
     case NEXT_TURN: {
+      if (!safeGuard) return state;
       const {
         tokenIndex,
         tokenList,
         gameOver,
         currentPlayer,
-        player1,
-        player2,
+        me,
+        opponent,
       } = state;
-      if (gameOver) return state;
-      const nextPlayer = currentPlayer.tag === "O" ? player2 : player1; // update the next player
+      if (!me || !opponent || !currentPlayer || gameOver) return state;
+      const nextPlayer = currentPlayer === me.id ? opponent.id : me.id; // update the next player
       const newTokenList = tokenList.map((t, i) => {
         if (i === tokenIndex) return { ...t, active: true };
         return t;
@@ -79,27 +96,29 @@ function gameReducer(state: GameState, action: any): GameState {
       };
     }
     case SET_NAME: {
-      const { name } = action.payload;
-      const { player1 } = state;
-      // TODO: change logic for current player, it should be set once the game starts not prior
-      const py = { ...player1, name };
-      return { ...state, player1: py, currentPlayer: py, gameReady: true };
+      // TODO: gotta add the tag and id to the payload
+      const { name, tag, id } = action.payload;
+      const me = { name, wins: 0, tag, id };
+      return { ...state, me };
     }
     case RESTART: {
-      const { currentPlayer, player1, player2 } = state;
+      const { currentPlayer, me, opponent } = state;
+      if (!me || !opponent || !currentPlayer) return state;
       const board = initializeBoard(7, 6);
-
-      let _player1, _player2, _currentPlayer: Player;
+      let _player1, _player2: Player;
+      let _currentPlayer: string;
       let tokens: TokenObject[];
-      if (currentPlayer.name === player1.name) {
-        _player1 = { ...player1, wins: player1.wins + 1 };
-        _player2 = player2;
-        _currentPlayer = _player1;
+
+      if (currentPlayer === me.id) {
+        // Current player won and should play first, add a win to the score too
+        _player1 = { ...me, wins: me.wins + 1 };
+        _player2 = opponent;
+        _currentPlayer = _player1.id;
         tokens = initializeTokens(_player1.tag, _player2.tag);
       } else {
-        _player1 = player1;
-        _player2 = { ...player2, wins: player1.wins + 1 };
-        _currentPlayer = _player2;
+        _player1 = me;
+        _player2 = { ...opponent, wins: opponent.wins + 1 };
+        _currentPlayer = _player2.id;
         tokens = initializeTokens(_player2.tag, _player1.tag);
       }
 
@@ -113,8 +132,8 @@ function gameReducer(state: GameState, action: any): GameState {
         tokenTop: 0,
         currentColumn: 0,
         gameOver: false,
-        player1: _player1,
-        player2: _player2,
+        me: _player1,
+        opponent: _player2,
         currentPlayer: _currentPlayer,
       };
     }
@@ -156,39 +175,27 @@ function gameReducer(state: GameState, action: any): GameState {
     }
     return -1;
   }
+
+  function safeGuard() {
+    const { me, opponent, currentPlayer } = state;
+    return me && opponent && currentPlayer;
+  }
 }
 
-const RESTART = "RESTART";
 export default function useGameReducer() {
-  const player1 = {
-    name: "",
-    tag: "O",
-    wins: 0,
-  };
-
-  const player2 = {
-    name: "AI",
-    tag: "X",
-    wins: 0,
-  };
-
-  const currentPlayer = player1;
-
-  const [state, dispatch] = useReducer(gameReducer, {
-    gameOver: false,
+  const initialState: GameState = {
+    board: initializeBoard(7, 6),
     boardColumns: 7,
     boardRows: 6,
-    board: initializeBoard(7, 6),
-    player1,
-    player2,
-    currentPlayer,
+    currentColumn: 0,
+    gameOver: false,
     gameReady: false,
     tokenIndex: 0,
+    tokenList: initializeTokens("O", "X"),
     tokenOffset: 0,
     tokenTop: 0,
-    tokenList: initializeTokens("O", "X"),
-    currentColumn: 0,
-  });
+  };
+  const [state, dispatch] = useReducer(gameReducer, initialState);
 
   const moveRight = () => {
     const { tokenOffset, boardColumns } = state;
@@ -211,8 +218,9 @@ export default function useGameReducer() {
     }, 350);
   };
 
-  const stateMyName = (name: string) => {
-    dispatch({ type: SET_NAME, payload: { name } });
+  const stateMyName = (name: string, id: string, tag: string) => {
+    dispatch({ type: SET_NAME, payload: { name, id, tag } });
+    socket.emit("createRoom", name);
   };
 
   const restartGame = () => {
